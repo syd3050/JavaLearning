@@ -20,6 +20,57 @@ public class MinHeap extends Base{
 		this.capacity = capacity;
 	}
 	
+	public boolean isEmpty() {
+		return this.next <= 0 ? true : false;
+	}
+	
+	/**
+	 * 取根节点
+	 * @return
+	 * @throws Exception
+	 */
+	public int top() throws Exception {
+		if(this.isEmpty())
+			throw new Exception("Heap is Empty!");
+		return this.data[0];
+	}
+	
+	/**
+	 * 移除并返回根节点
+	 * @return
+	 * @throws Exception
+	 */
+	public int extract() throws Exception {
+		if(this.isEmpty())
+			throw new Exception("Heap is Empty!");
+		int tmp = this.data[0];
+		this.data[0] = this.data[this.next-1];
+		this.data[this.next-1] = 0;
+		this.next--;
+		this.down(0);
+		return tmp;
+	}
+	
+	public void down(int index) {
+		while(2*index+1 < this.next) {
+			int left = 2*index + 1;
+			int right = left + 1;
+			//找左右两个孩子中最小的节点跟父节点比较
+			if(right < this.next && this.data[right] < this.data[left])
+				left = right;
+			//如果最小的节点都比父节点小，那么将父节点跟最小节点交换
+			if(this.data[index] > this.data[left]) {
+				int tmp = this.data[index];
+				this.data[index] = this.data[left];
+				this.data[left] = tmp;
+				index = left;
+			}else {
+				//父节点已经比左右子节点都小，退出循环
+				break;
+			}
+			
+		}
+	}
     
     public boolean insert(int n)
     {
@@ -57,12 +108,13 @@ public class MinHeap extends Base{
     
     public String toString() {
 		StringBuilder sBuilder  = new StringBuilder();
-		for(int i : this.data)
-		{
-			if(i > 0) {
-				sBuilder.append(i);
-				sBuilder.append(",");
+		while(!this.isEmpty()) {
+			try {
+				sBuilder.append(this.extract());
+			} catch (Exception e) {
+				break;
 			}
+			sBuilder.append(",");
 		}
 		sBuilder.deleteCharAt(sBuilder.length()-1);
 		return sBuilder.toString();
